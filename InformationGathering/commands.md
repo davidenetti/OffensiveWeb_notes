@@ -75,12 +75,12 @@ If there is a subdomains pattern that we identify, we can use it to discover add
 The next step will be to launch gobuster using the dns module, specifying the following options:
 
 - dns: Launch the DNS module.
--q: Don't print the banner and other noise.
--r: Use custom DNS server
--d: A target domain name
--p: Path to the patterns file
--w: Path to the wordlist
--o: Output file
+- q: Don't print the banner and other noise.
+- r: Use custom DNS server
+- d: A target domain name
+- p: Path to the patterns file
+- w: Path to the wordlist
+- o: Output file
 
 Example of usage:
 - export TARGET="facebook.com"
