@@ -17,7 +17,7 @@
 
 # Passive subdomain enum
 - **VirusTotal**: https://www.virustotal.com/gui/home/url
-- **cat sources.txt | while read source; do theHarvester -d "${TARGET}" -b \$source -f "${source}-${TARGET}";done**: Searching for subdomains and other information on the sources provided in the source.txt list.
+- **cat sources.txt | while read source; do theHarvester -d "${TARGET}" -b ${source} -f "${source}-${TARGET}";done**: Searching for subdomains and other information on the sources provided in the source.txt list.
 
 # Passive infrastructure enumeration
 - **WayBackMachine**: http://web.archive.org/
