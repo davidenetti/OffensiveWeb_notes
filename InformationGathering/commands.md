@@ -54,3 +54,36 @@ Aquatone is a tool for automatic and visual inspection of websites across many h
 Use cat in our subdomain list and pipe the command to aquatone via: **cat facebook_aquatone.txt | aquatone -out ./aquatone -screenshot-timeout 1000**.
 
 When it finishes, we will have a file called aquatone_report.html where we can see screenshots, technologies identified, server response headers, and HTML.
+
+# Active subdomain enumeration
+The zone transfer is how a secondary DNS server receives information from the primary DNS server and updates it. The master-slave approach is used to organize DNS servers within a domain, with the slaves receiving updated DNS information from the master DNS. The master DNS server should be configured to enable zone transfers from secondary (slave) DNS servers, although this might be misconfigured.
+
+Sequence of commands to perform zone transfer:
+- nslookup -type=NS zonetranfer.me.
+- nslookup -type=any -query=AXFR zonetransfer.me nsztm1.digi.ninja.
+
+## Gobuster
+
+Gobuster is a tool that we can use to perform subdomain enumeration. It is especially interesting for us the patterns options as we have learned some naming conventions from the passive information gathering we can use to discover new subdomains following the same pattern.
+
+We can use a wordlist from Seclists repository along with gobuster if we are looking for words in patterns instead of numbers.
+
+If there is a subdomains pattern that we identify, we can use it to discover additional ones. The first step will be to create a "patterns.txt" file with the patterns previously dicovered. Example:
+- lert-api-shv-{GOBUSTER}-sin6
+- atlas-pp-shv-{GOBUSTER}-sin6
+
+The next step will be to launch gobuster using the dns module, specifying the following options:
+
+- dns: Launch the DNS module.
+-q: Don't print the banner and other noise.
+-r: Use custom DNS server
+-d: A target domain name
+-p: Path to the patterns file
+-w: Path to the wordlist
+-o: Output file
+
+Example of usage:
+- export TARGET="facebook.com"
+- export NS="d.ns.facebook.com"
+- export WORDLIST="numbers.txt"
+- gobuster dns -q -r "${NS}" -d "${TARGET}" -w "${WORDLIST}" -p ./patterns.txt -o "gobuster_${TARGET}.txt"
