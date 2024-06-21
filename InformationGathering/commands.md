@@ -87,3 +87,9 @@ Example of usage:
 - export NS="d.ns.facebook.com"
 - export WORDLIST="numbers.txt"
 - gobuster dns -q -r "${NS}" -d "${TARGET}" -w "${WORDLIST}" -p ./patterns.txt -o "gobuster_${TARGET}.txt"
+
+# Virtual hosts
+A virtual host (vHost) is a feature that allows several websites to be hosted on a single server. This is an excellent solution if you have many websites and don't want to go through the time-consuming (and expensive) process of setting up a new web server for each one. Imagine having to set up a different webserver for a mobile and desktop version of the same page. There are two ways to configure virtual hosts:
+
+- IP-based virtual hosting
+- Name-based virtual hosting
