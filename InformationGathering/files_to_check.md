@@ -1,9 +1,11 @@
-There are some sensitive files to look at:
+# There are some sensitive files to look at
+
 - Robots.txt;
 - sitemap.xml;
-- /.well-known/;
+- /.well-known/.
 
-Well known registered URI:
+# Well known registered URI
+
 - security.txt: Contains contact information for security researchers to report vulnerabilities;
 - /.well-known/change-password: Provides a standard URL for directing users to a password change page;
 - https://w3c.github.io/webappsec-change-password-url/#the-change-password-well-known-uri;
