@@ -39,19 +39,19 @@ There are also other characteristics to take into account while fingerprinting w
 ## Whatweb
 Whatweb recognizes web technologies, including content management systems (CMS), blogging platforms, statistic/analytics packages, JavaScript libraries, web servers, and embedded devices.
 
-Example of command: **whatweb -a3 https://www.facebook.com -v**.
+Example of command: **whatweb -a3 https://www.example.com -v**.
 
 ## WafWOOf
 WafW00f is a web application firewall (WAF) fingerprinting tool that sends requests and analyses responses to determine if a security solution is in place.
 
 We can use options like **-a** to check all possible WAFs in place instead of stopping scanning at the first match, read targets from an input file via the **-i** flag, or proxy the requests using the **-p** option.
 
-Example of command: **wafw00f -v https://www.tesla.com**.
+Example of command: **wafw00f -v https://www.example.com**.
 
 ## Aquatone
 Aquatone is a tool for automatic and visual inspection of websites across many hosts and is convenient for quickly gaining an overview of HTTP-based attack surfaces by scanning a list of configurable ports, visiting the website with a headless Chrome browser, and taking a screenshot. This is helpful, especially when dealing with huge subdomain lists.
 
-Use cat in our subdomain list and pipe the command to aquatone via: **cat facebook_aquatone.txt | aquatone -out ./aquatone -screenshot-timeout 1000**.
+Use cat in our subdomain list and pipe the command to aquatone via: **cat example_aquatone.txt | aquatone -out ./aquatone -screenshot-timeout 1000**.
 
 When it finishes, we will have a file called aquatone_report.html where we can see screenshots, technologies identified, server response headers, and HTML.
 
@@ -83,8 +83,8 @@ The next step will be to launch gobuster using the dns module, specifying the fo
 - o: Output file
 
 Example of usage:
-- export TARGET="facebook.com"
-- export NS="d.ns.facebook.com"
+- export TARGET="example.com"
+- export NS="d.ns.example.com"
 - export WORDLIST="numbers.txt"
 - gobuster dns -q -r "${NS}" -d "${TARGET}" -w "${WORDLIST}" -p ./patterns.txt -o "gobuster_${TARGET}.txt"
 
@@ -117,7 +117,7 @@ Certificate Transparency logs rely on a clever combination of cryptographic tech
 
 To ensure CT logs' integrity and tamper-proof nature, they employ a Merkle tree cryptographic structure. This structure organises the certificates in a tree-like fashion, where each leaf node represents a certificate, and each non-leaf node represents a hash of its child nodes. The root of the tree, known as the Merkle root, is a single hash representing the entire log.
 
-- **curl -s "https://crt.sh/?q=facebook.com&output=json" | jq -r '.[]
+- **curl -s "https://crt.sh/?q=example.com&output=json" | jq -r '.[]
  | select(.name_value | contains("dev")) | .name_value' | sort -u**
 
 # Banner grabbing
