@@ -107,10 +107,10 @@ Think of CT logs as a global registry of certificates. They provide a transparen
 # How certificate transparency logs works
 Certificate Transparency logs rely on a clever combination of cryptographic techniques and public accountability:
 
-1. Certificate Issuance: When a website owner requests an SSL/TLS certificate from a Certificate Authority (CA), the CA performs due diligence to verify the owner's identity and domain ownership. Once verified, the CA issues a pre-certificate, a preliminary certificate version.
-2. Log Submission: The CA then submits this pre-certificate to multiple CT logs. Each log is operated by a different organisation, ensuring redundancy and decentralisation. The logs are essentially append-only, meaning that once a certificate is added, it cannot be modified or deleted, ensuring the integrity of the historical record.
-3. Signed Certificate Timestamp (SCT): Upon receiving the pre-certificate, each CT log generates a Signed Certificate Timestamp (SCT). This SCT is a cryptographic proof that the certificate was submitted to the log at a specific time. The SCT is then included in the final certificate issued to the website owner.
-4. Browser Verification: When a user's browser connects to a website, it checks the certificate's SCTs. These SCTs are verified against the public CT logs to confirm that the certificate was issued and logged correctly. If the SCTs are valid, the browser establishes a secure connection; if not, it may display a warning to the user.
+1. Certificate Issuance: When a website owner requests an SSL/TLS certificate from a Certificate Authority (CA), the CA performs due diligence to verify the owner's identity and domain ownership. Once verified, the CA issues a pre-certificate, a preliminary certificate version;
+2. Log Submission: The CA then submits this pre-certificate to multiple CT logs. Each log is operated by a different organisation, ensuring redundancy and decentralisation. The logs are essentially append-only, meaning that once a certificate is added, it cannot be modified or deleted, ensuring the integrity of the historical record;
+3. Signed Certificate Timestamp (SCT): Upon receiving the pre-certificate, each CT log generates a Signed Certificate Timestamp (SCT). This SCT is a cryptographic proof that the certificate was submitted to the log at a specific time. The SCT is then included in the final certificate issued to the website owner;
+4. Browser Verification: When a user's browser connects to a website, it checks the certificate's SCTs. These SCTs are verified against the public CT logs to confirm that the certificate was issued and logged correctly. If the SCTs are valid, the browser establishes a secure connection; if not, it may display a warning to the user;
 5. Monitoring and Auditing: CT logs are continuously monitored by various entities, including security researchers, website owners, and browser vendors. These monitors look for anomalies or suspicious certificates, such as those issued for domains they don't own or certificates violating industry standards. If any issues are found, they can be reported to the relevant CA for investigation and potential revocation of the certificate.
 
 # The merkle tree structure
@@ -119,7 +119,3 @@ To ensure CT logs' integrity and tamper-proof nature, they employ a Merkle tree 
 
 - **curl -s "https://crt.sh/?q=facebook.com&output=json" | jq -r '.[]
  | select(.name_value | contains("dev")) | .name_value' | sort -u**
-
-- curl -s "https://crt.sh/?q=facebook.com&output=json": This command fetches the JSON output from crt.sh for certificates matching the domain facebook.com.
-- jq -r '.[] | select(.name_value | contains("dev")) | .name_value': This part filters the JSON results, selecting only entries where the name_value field (which contains the domain or subdomain) includes the string "dev." The -r flag tells jq to output raw strings.
-- sort -u: This sorts the results alphabetically and removes duplicates.
