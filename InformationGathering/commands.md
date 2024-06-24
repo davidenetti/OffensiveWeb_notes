@@ -119,3 +119,32 @@ To ensure CT logs' integrity and tamper-proof nature, they employ a Merkle tree 
 
 - **curl -s "https://crt.sh/?q=facebook.com&output=json" | jq -r '.[]
  | select(.name_value | contains("dev")) | .name_value' | sort -u**
+
+# Banner grabbing
+
+- **curl -I example.com**
+
+# Nikto
+
+Nikto is a powerful open-source web server scanner. In addition to its primary function as a vulnerability assessment tool, Nikto's fingerprinting capabilities provide insights into a website's technology stack.
+
+- **nikto -h example.com**
+
+# Crawling
+- OWASP ZAP;
+- Scrapy.
+
+
+## Crawling using scrapy and ReconSpider
+
+1. Download ReconSpider and unzip it;
+2. Install scrapy (PIP install);
+3. Use the following command: **python3 ReconSpider.py http://example.com"**
+4. Check the result in the current path in the auto-creating file called "results.json".
+
+
+# Google dorking
+
+Google Dorking, also known as Google Hacking, is a technique that leverages the power of search operators to uncover sensitive information, security vulnerabilities, or hidden content on websites, using Google Search.
+
+- Refer to **Google Hacking Database** for all the queries.
