@@ -31,9 +31,9 @@ There are also other characteristics to take into account while fingerprinting w
 
 - **Cookies**: Cookies are another attractive value to look at as each technology by default has its cookies. Some of the default cookie values are:
 
-.NET: ASPSESSIONID<RANDOM>=<COOKIE_VALUE>
-PHP: PHPSESSID=<COOKIE_VALUE>
-JAVA: JSESSION=<COOKIE_VALUE>
+- .NET: ASPSESSIONID<RANDOM>=<COOKIE_VALUE>
+- PHP: PHPSESSID=<COOKIE_VALUE>
+- JAVA: JSESSION=<COOKIE_VALUE>
 
 
 ## Whatweb
