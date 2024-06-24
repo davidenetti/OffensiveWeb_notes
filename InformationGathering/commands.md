@@ -148,3 +148,8 @@ Nikto is a powerful open-source web server scanner. In addition to its primary f
 Google Dorking, also known as Google Hacking, is a technique that leverages the power of search operators to uncover sensitive information, security vulnerabilities, or hidden content on websites, using Google Search.
 
 - Refer to **Google Hacking Database** for all the queries.
+
+# Automating recon
+
+- Final Recon: A Python-based reconnaissance tool offering a range of modules for different tasks like SSL certificate checking, Whois information gathering, header analysis, and crawling. Its modular structure enables easy customisation for specific needs;
+- TheHarvester:  Specifically designed for gathering email addresses, subdomains, hosts, employee names, open ports, and banners from different public sources like search engines, PGP key servers, and the SHODAN database. It is a command-line tool written in Python.
