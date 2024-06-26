@@ -1,5 +1,5 @@
 # WHOIS
-- **whois $TARGET**:	WHOIS lookup for the target.
+- ```whois $TARGET```:	WHOIS lookup for the target.
 
 # NSlookup and DIG
 - ```nslookup $TARGET```: Identify the A record for the target domain.
