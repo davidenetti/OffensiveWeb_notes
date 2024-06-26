@@ -1,6 +1,6 @@
 # Function that uses "document.write()" and concatenation of the input string
 
-### Scenario:
+### Scenario
 
 ```javascript
 function trackSearch(query) {
@@ -22,7 +22,7 @@ In the DOM the passed element is displayed in the "img" tag created by the JS fu
 <img src="/resources/images/tracker.gif?searchTerms=test">
 ```
 
-### Exploitation:
+### Exploitation
 
 We can pass this string as input:
 
@@ -40,4 +40,28 @@ Here, what happens is the following:
 The HTML resulting from this input is the following:
 ```html
 <img src="/resources/images/tracker.gif?searchTerms=test" onload=alert()">
+```
+
+# INNER.html sink using source "location.search"
+
+### Scenario
+
+```javascript
+function doSearchQuery(query) {
+    document.getElementById('searchMessage').innerHTML = query;
+}
+var query = (new URLSearchParams(window.location.search)).get('search');
+if(query) {
+    doSearchQuery(query);
+}
+```
+
+This JS code snippet takes the input string with "window.location.search" and takes the parameter called "search".
+
+This string is passed to the JS function and used with the innerHTML.
+
+DOM in which the input is diplayed:
+
+```html
+
 ```
