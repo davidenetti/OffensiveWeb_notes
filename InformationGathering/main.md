@@ -23,7 +23,7 @@
 - **WayBackMachine**: http://web.archive.org/
 
 # Active infrastructure identification
--  **curl -I "http://${TARGET}"**: we use this to identify the webserver version and technology.
+-  ```curl -I "http://${TARGET}"```: we use this to identify the webserver version and technology.
 
 There are also other characteristics to take into account while fingerprinting web servers in the response headers. These are:
 
@@ -39,19 +39,19 @@ There are also other characteristics to take into account while fingerprinting w
 ## Whatweb
 Whatweb recognizes web technologies, including content management systems (CMS), blogging platforms, statistic/analytics packages, JavaScript libraries, web servers, and embedded devices.
 
-Example of command: **whatweb -a3 https://www.example.com -v**.
+Example of command: ```whatweb -a3 https://www.example.com -v```.
 
 ## WafWOOf
 WafW00f is a web application firewall (WAF) fingerprinting tool that sends requests and analyses responses to determine if a security solution is in place.
 
 We can use options like **-a** to check all possible WAFs in place instead of stopping scanning at the first match, read targets from an input file via the **-i** flag, or proxy the requests using the **-p** option.
 
-Example of command: **wafw00f -v https://www.example.com**.
+Example of command: ```wafw00f -v https://www.example.com```.
 
 ## Aquatone
 Aquatone is a tool for automatic and visual inspection of websites across many hosts and is convenient for quickly gaining an overview of HTTP-based attack surfaces by scanning a list of configurable ports, visiting the website with a headless Chrome browser, and taking a screenshot. This is helpful, especially when dealing with huge subdomain lists.
 
-Use cat in our subdomain list and pipe the command to aquatone via: **cat example_aquatone.txt | aquatone -out ./aquatone -screenshot-timeout 1000**.
+Use cat in our subdomain list and pipe the command to aquatone via: ```cat example_aquatone.txt | aquatone -out ./aquatone -screenshot-timeout 1000```.
 
 When it finishes, we will have a file called aquatone_report.html where we can see screenshots, technologies identified, server response headers, and HTML.
 
@@ -59,8 +59,11 @@ When it finishes, we will have a file called aquatone_report.html where we can s
 The zone transfer is how a secondary DNS server receives information from the primary DNS server and updates it. The master-slave approach is used to organize DNS servers within a domain, with the slaves receiving updated DNS information from the master DNS. The master DNS server should be configured to enable zone transfers from secondary (slave) DNS servers, although this might be misconfigured.
 
 Sequence of commands to perform zone transfer:
-- nslookup -type=NS zonetranfer.me.
-- nslookup -type=any -query=AXFR zonetransfer.me nsztm1.digi.ninja.
+```
+nslookup -type=NS zonetranfer.me.
+
+nslookup -type=any -query=AXFR zonetransfer.me nsztm1.digi.ninja.
+```
 
 ## Gobuster
 
@@ -83,10 +86,15 @@ The next step will be to launch gobuster using the dns module, specifying the fo
 - o: Output file
 
 Example of usage:
-- export TARGET="example.com"
-- export NS="d.ns.example.com"
-- export WORDLIST="numbers.txt"
-- gobuster dns -q -r "${NS}" -d "${TARGET}" -w "${WORDLIST}" -p ./patterns.txt -o "gobuster_${TARGET}.txt"
+```
+export TARGET="example.com"
+
+export NS="d.ns.example.com"
+
+export WORDLIST="numbers.txt"
+
+gobuster dns -q -r "${NS}" -d "${TARGET}" -w "${WORDLIST}" -p ./patterns.txt -o "gobuster_${TARGET}.txt"
+```
 
 # Virtual hosts
 A virtual host (vHost) is a feature that allows several websites to be hosted on a single server. This is an excellent solution if you have many websites and don't want to go through the time-consuming (and expensive) process of setting up a new web server for each one. Imagine having to set up a different webserver for a mobile and desktop version of the same page. There are two ways to configure virtual hosts:
@@ -117,18 +125,19 @@ Certificate Transparency logs rely on a clever combination of cryptographic tech
 
 To ensure CT logs' integrity and tamper-proof nature, they employ a Merkle tree cryptographic structure. This structure organises the certificates in a tree-like fashion, where each leaf node represents a certificate, and each non-leaf node represents a hash of its child nodes. The root of the tree, known as the Merkle root, is a single hash representing the entire log.
 
-- **curl -s "https://crt.sh/?q=example.com&output=json" | jq -r '.[]
- | select(.name_value | contains("dev")) | .name_value' | sort -u**
-
+```
+curl -s "https://crt.sh/?q=example.com&output=json" | jq -r '.[]
+ | select(.name_value | contains("dev")) | .name_value' | sort -u
+```
 # Banner grabbing
 
-- **curl -I example.com**
+```curl -I example.com```
 
 # Nikto
 
 Nikto is a powerful open-source web server scanner. In addition to its primary function as a vulnerability assessment tool, Nikto's fingerprinting capabilities provide insights into a website's technology stack.
 
-- **nikto -h example.com**
+```nikto -h example.com```
 
 # Crawling
 - OWASP ZAP;
@@ -139,9 +148,8 @@ Nikto is a powerful open-source web server scanner. In addition to its primary f
 
 1. Download ReconSpider and unzip it;
 2. Install scrapy (PIP install);
-3. Use the following command: **python3 ReconSpider.py http://example.com"**
+3. Use the following command: ```python3 ReconSpider.py http://example.com"```
 4. Check the result in the current path in the auto-creating file called "results.json".
-
 
 # Google dorking
 
