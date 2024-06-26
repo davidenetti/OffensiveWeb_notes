@@ -7,55 +7,65 @@ This is the basic idea behind web fuzzing for pages and directories. Still, we c
 # Directory fuzzing
 
 As we can see from the example above, the main two options are -w for wordlists and -u for the URL. We can assign a wordlist to a keyword to refer to it where we want to fuzz. For example, we can pick our wordlist and assign the keyword FUZZ to it by adding :FUZZ after it:
-- **ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ**
+```ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ```
 
 Next, as we want to be fuzzing for web directories, we can place the FUZZ keyword where the directory would be within our URL, with:
-- **ffuf -w <SNIP> -u http://SERVER_IP:PORT/FUZZ**
+```ffuf -w <SNIP> -u http://SERVER_IP:PORT/FUZZ```
 
 # Pages extension fuzzing
 
 To find out what types of pages the website uses, like .html, .php or something else, we can put the keyword FUZZ where the extension would be using ".FUZZ" or only "FUZZ" if the "." is already in the wordlist, and using a wordlist for common extensions.
-- ffuf -w /opt/useful/SecLists/Discovery/Web-Content/web-extensions.txt:FUZZ -u http://SERVER_IP:PORT/blog/indexFUZZ
+```ffuf -w /opt/useful/SecLists/Discovery/Web-Content/web-extensions.txt:FUZZ -u http://SERVER_IP:PORT/blog/indexFUZZ```
 
 
 # Pages fuzzing
 
 Now that we know the extension used by the web app pages, we can fuzz the pages themselves (for example sssuming we have found the use of .php pages):
-- ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/blog/FUZZ.php
+```ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/blog/FUZZ.php```
 
 # Recursive fuzzing
 
 So far, we have been fuzzing for directories, then going under these directories, and then fuzzing for files. However, if we had dozens of directories, each with their own subdirectories and files, this would take a very long time to complete. To be able to automate this, we will utilize what is known as recursive fuzzing.
 
 In ffuf, we can enable recursive scanning with the **-recursion** flag, and we can specify the depth with the -recursion-depth flag. If we specify **-recursion-depth 1**, it will only fuzz the main directories and their direct sub-directories. If any sub-sub-directories are identified (like /login/user, it will not fuzz them for pages). When using recursion in ffuf, we can specify our extension with **-e .php**
-- **ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/FUZZ -recursion -recursion-depth 1 -e .php -v**
+```ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/FUZZ -recursion -recursion-depth 1 -e .php -v```
 
 
 # sub-domain fuzzing
 
-- **ffuf -w /opt/useful/SecLists/Discovery/DNS/subdomains-top1million-5000.txt:FUZZ -u https://FUZZ.example.com/**
+```ffuf -w /opt/useful/SecLists/Discovery/DNS/subdomains-top1million-5000.txt:FUZZ -u https://FUZZ.example.com/```
 
 # Vhosts fuzzing
 
-- **ffuf -w /opt/useful/SecLists/Discovery/DNS/subdomains-top1million-5000.txt:FUZZ -u http://example.com:PORT/ -H 'Host: FUZZ.example.com'**
+```ffuf -w /opt/useful/SecLists/Discovery/DNS/subdomains-top1million-5000.txt:FUZZ -u http://example.com:PORT/ -H 'Host: FUZZ.example.com'```
 
 # Filtering results in ffuf
 Ffuf provides the option to match or filter out a specific HTTP code, response size, or amount of words. We can see that with.
 
 MATCHER OPTIONS:
--mc Match HTTP status codes, or "all" for everything. (default: 200,204,301,302,307,401,403)
--ml Match amount of lines in response
--mr Match regexp
--ms Match HTTP response size
--mw Match amount of words in response
+```
+mc Match HTTP status codes, or "all" for everything. (default: 200,204,301,302,307,401,403)
+
+ml Match amount of lines in response
+
+mr Match regexp
+
+ms Match HTTP response size
+
+mw Match amount of words in response
 
 FILTER OPTIONS:
--fc Filter HTTP status codes from response. Comma separated list of codes and ranges
--fl Filter by amount of lines in response. Comma separated list of line counts and ranges
--fr Filter regexp
--fs Filter HTTP response size. Comma separated list of sizes and ranges
--fw Filter by amount of words in response. Comma separated list of word counts and ranges
 
+fc Filter HTTP status codes from response. Comma separated list of codes and ranges
+
+fl Filter by amount of lines in response. Comma separated list of line counts and ranges
+
+fr Filter regexp
+
+fs Filter HTTP response size. Comma separated list of sizes and ranges
+
+fw Filter by amount of words in response. Comma separated list of word counts and ranges
+```
 
 # Parameter fuzzing
 
