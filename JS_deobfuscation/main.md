@@ -8,7 +8,7 @@ Obfuscation is a technique used to make a script more difficult to read by human
 
 # Terminal commands
 ```
-echo test | base64: **base64 encode**
+echo test | base64: base64 encode
 
 echo ENCODED_B64 | base64 -d: base64 decode
 
