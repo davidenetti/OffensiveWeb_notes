@@ -65,9 +65,10 @@ mr Match regexp
 ms Match HTTP response size
 
 mw Match amount of words in response
+```
 
 FILTER OPTIONS:
-
+```
 fc Filter HTTP status codes from response. Comma separated list of codes and ranges
 
 fl Filter by amount of lines in response. Comma separated list of line counts and ranges
