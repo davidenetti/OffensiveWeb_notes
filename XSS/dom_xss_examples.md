@@ -30,7 +30,7 @@ We can pass this string as input:
 test" onload=alert()
 ```
 
-Here, what happen is the following:
+Here, what happens is the following:
 - The img tag is created as shown before;
 - Now, due to the presence of " we are able to break the string automatically created by the JS function;
 - The image is actually loaded, but given the presence of the onload action we inserted, the action specified in it will be perfomed after the image loading;
