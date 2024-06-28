@@ -85,7 +85,7 @@ The DOM modified is the following:
 
 # DOM XSS in JQuery anchor href attribute sink using location.search source
 
-### Scenario
+### Scenario
 JQuery is a JS framework with a little bit different syntax from vanilla JS.
 
 ```html
