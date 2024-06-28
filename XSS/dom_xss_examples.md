@@ -143,7 +143,7 @@ It assign to the variable the content of the h2 tag which contains the value of 
 
 Clearly, the "contains" method search for a value that we can manipulate.
 
-N.B.: **In some version of JQuery the function "contains" may behave as unexpectedly**. So, if we try to give to it the argument "<h1> somethingUNIQUE </h1>" and print the variabile "post" we may notice that post variable contains our h1 tag.
+N.B.: **In some version of JQuery the function "contains" may behave as unexpectedly**. So, if we try to give to it the argument ```<h1> somethingUNIQUE </h1>``` and print the variabile "post" we may notice that post variable contains our h1 tag.
 **In other words, the contains method created the object passed as argument to it.**
 This DOM element isn't inserted in the page, but it's a **detached DOM element**.
 
