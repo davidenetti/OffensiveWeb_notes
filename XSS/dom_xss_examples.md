@@ -121,3 +121,59 @@ Resulting DOM:
 ```
 
 When we will click on the link on the web page, the JS will be executed. We will get an alert with the cookie shown inside.
+
+# JQuery selector sink using hashchange
+
+### Scenario
+
+In the page source, we can see the following JS script:
+```javascript
+$(window).on('hashchange', function(){
+    var post = $('section.blog-list h2:contains(' + decodeURIComponent(window.location.hash.slice(1)) + ')');
+    if (post) post.get(0).scrollIntoView();
+});
+```
+
+What's an **hashchange event**?
+You can put an hashtag (#) at the end of the url followed by a number or a word.
+It's often used as bookmarking functionality.
+
+The JS function showed creates a variable called "post".
+It assign to the variable the content of the h2 tag which contains the value of the hashchange we pass to the URL parameter contained inside the section "blog-list".
+
+Clearly, the "contains" method search for a value that we can manipulate.
+
+N.B.: **In some version of JQuery the function "contains" may behave as unexpectedly**. So, if we try to give to it the argument "<h1> somethingUNIQUE </h1>" and print the variabile "post" we may notice that post variable contains our h1 tag.
+**In other words, the contains method created the object passed as argument to it.**
+This DOM element isn't inserted in the page, but it's a **detached DOM element**.
+
+We can give it a parent node, so, in other words, we can attach in to the DOM of the web page:
+
+```javascript
+var mynode = document.getElementById("something");
+mynode.appendChild(post)
+```
+
+### Exploit
+
+We can exploit the vulnerability above, by using a tag like "<img>" and forcing it to the error and hen using a onerror functionality.
+
+```javascript
+let myimg = document.createElement('img')
+myimg.src = 0 //nosense value of the src
+```
+
+We can pass it as payload:
+
+```html
+<img src=0 onerror='alert()'>
+```
+
+In this case we can avoid to attach this img tag to the web page DOM because we can notice from the network connection panel of our browser that it calls immediatly the "src" location although this "img" tag isn't attached to the DOM of the web page.
+
+In some case, we can deliver a simiilar payload using **"iframe"**:
+```html
+<iframe src="https://theVulnerablePageURL/#" onload="this.src+='<img src=x onerror=print()>'"></iframe>
+```
+
+This code load the vulnerable page inside a box (the iframe) and then append to the URL in the src field the hashchange value which exploits the vulnerability.
