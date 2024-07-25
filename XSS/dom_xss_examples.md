@@ -236,3 +236,49 @@ The resulting DOM after the exploit is:
 <option>Paris</option>
 <option>Milan</option>
 ```
+
+# Reflected DOM XSS, function "eval()" JS
+
+
+### Scenario
+We had a JS function with an "eval()" funciton usage inside. From the JS documentation:
+
+```The eval() function evaluates JavaScript code represented as a string and returns its completion value. The source is parsed as a script. Warning: Executing JavaScript from a string is an enormous security risk. It is far too easy for a bad actor to run arbitrary code when you use eval().```
+
+```javascript
+function search(path) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            eval('var searchResultsObj = ' + this.responseText);
+            displaySearchResults(searchResultsObj);
+        }
+    };
+```
+
+We can send our term in the URL parameter "search".
+Because it uses an AJAX GET request, we can intercept it with Burp suite.
+
+### Exploit
+We can break the eval content with something like ```test"-alert()```. We notice that an escaping of the " character is done automatically. So we can "escape the escape character" with something like this: ``` \"-alert(1)}// ```.
+
+As you have injected a backslash and the site isn't escaping them, when the JSON response attempts to escape the opening double-quotes character, it adds a second backslash. The resulting double-backslash causes the escaping to be effectively canceled out. This means that the double-quotes are processed unescaped, which closes the string that should contain the search term.
+An arithmetic operator (in this case the subtraction operator) is then used to separate the expressions before the alert() function is called. Finally, a closing curly bracket and two forward slashes close the JSON object early and comment out what would have been the rest of the object.
+
+
+# Both stored and DOM based XSS, incorrect use of replace() function in JS
+
+### Scenario
+We have a blog, which different articles. Each of one, allow you to comment. Analyzing page, you can found that a JS function is used to replace "<" and ">" with the related HTML encoding.
+
+```javascript
+function escapeHTML(html) {
+    return html.replace('<', '&lt;').replace('>', '&gt;');
+}
+```
+
+If we check the documentation of the replace() function we can see that:
+The replace() method of String values returns a new string with one, some, or all matches of a pattern replaced by a replacement. The pattern can be a string or a RegExp, and the replacement can be a string or a function called for each match. **If pattern is a string, only the first occurrence will be replaced**. The original string is left unchanged.
+
+# Exploit
+We can give a payload like: ```<h1><img src=0 onerror=alert()></img>```
