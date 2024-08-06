@@ -282,3 +282,5 @@ The replace() method of String values returns a new string with one, some, or al
 
 ### Exploit
 We can give a payload like: ```<h1><img src=0 onerror=alert()></img>```
+
+

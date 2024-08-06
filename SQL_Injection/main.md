@@ -115,3 +115,112 @@ SELECT * FROM logins WHERE username='admin' or '1'='1' AND password = 'something
 
 **The AND operator will be evaluated first, and it will return false. Then, the OR operator would be evalutated, and if either of the statements is true, it would return true. Since 1=1 always returns true, this query will return true, and it will grant us access**.
 
+
+# Using comments in SQL injection
+
+Just like any other language, SQL allows the use of comments as well. Comments are used to document queries or ignore a certain part of the query. We can use two types of line comments with MySQL **--** and **#**, in addition to an in-line comment /**/.
+
+Example: 
+```sql
+SELECT username FROM logins; -- Selects usernames from the logins table
+```
+
+Note: In SQL, using two dashes only is not enough to start a comment. So, there has to be an empty space after them, so the comment starts with (-- ), with a space at the end. This is sometimes URL encoded as (--+), as spaces in URLs are encoded as (+). To make it clear, we will add another (-) at the end (-- -), to show the use of a space character.
+
+Another example:
+```sql
+SELECT * FROM logins WHERE username = 'admin'; # You can place anything here AND password = 'something'
+```
+
+Tip: if you are inputting your payload in the URL within a browser, a (#) symbol is usually considered as a tag, and will not be passed as part of the URL. In order to use (#) as a comment within a browser, we can use '%23', which is an URL encoded (#) symbol.
+
+# SQL union injection
+
+The Union clause is used to combine results from multiple SELECT statements. This means that through a UNION injection, we will be able to SELECT and dump data from all across the DBMS, from multiple tables and databases.
+
+Example of query:
+```sql
+SELECT * FROM ports UNION SELECT * FROM ships;
+```
+
+Note: The data types of the selected columns on all positions should be the same.
+
+A UNION statement **can only operate on SELECT statements with an equal number of columns**. For example, if we attempt to UNION two queries that have results with a different number of columns, we will get an error. We will find out that the original query will usually not have the same number of columns as the SQL query we want to execute, so we will have to work around that. For example, suppose we only had one column. In that case, we want to SELECT, we can put junk data for the remaining required columns so that the total number of columns we are UNIONing with remains the same as the original query.
+
+
+### Retrieve the number of columns
+
+Before going ahead and exploiting Union-based queries, we need to find the number of columns selected by the server. There are two methods of detecting the number of columns:
+- Using ORDER BY
+- Using UNION
+
+The first way of detecting the number of columns is through the **ORDER BY function**, which we discussed earlier. We have to inject a query that sorts the results by a column we specified, 'i.e., column 1, column 2, and so on', until we get an error saying the column specified does not exist.
+
+For example, we can start with order by 1, sort by the first column, and succeed, as the table must have at least one column. Then we will do order by 2 and then order by 3 until we reach a number that returns an error, or the page does not show any output, which means that this column number does not exist. The final successful column we successfully sorted by gives us the total number of columns.
+
+The other method is to attempt a Union injection with a different number of columns until we successfully get the results back. The first method always returns the results until we hit an error, while this method always gives an error until we get a success. We can start by injecting a 3 column UNION query:
+- ```cn' UNION select 1,2,3-- -```
+
+
+While a query may return multiple columns, the web application may only display some of them. So, if we inject our query in a column that is not printed on the page, we will not get its output. This is why we need to determine which columns are printed to the page, to determine where to place our injection.
+
+# MySQL fingerprint
+
+Before enumerating the database, we usually need to identify the type of DBMS we are dealing with. This is because each DBMS has different queries, and knowing what it is will help us know what queries to use.
+
+First check:
+- As an initial guess, if the webserver we see in HTTP responses is Apache or Nginx, it is a good guess that the webserver is running on Linux, so the DBMS is likely MySQL;
+- The same also applies to Microsoft DBMS if the webserver is IIS, so it is likely to be MSSQL.
+
+
+The following queries and their output will tell us that we are dealing with MySQL:
+
+| Payload | When to Use | Expected Output | Wrong Output |
+|---------|-------------|-----------------|--------------|
+| SELECT @@version | When we have full query output | MySQL Version 'i.e. 10.3.22-MariaDB-1ubuntu1' | In MSSQL it returns MSSQL version. Error with other DBMS.|
+| SELECT POW(1,1) | When we only have numeric output | 1 | Error with other DBMS |
+| SELECT SLEEP(5) |	Blind/No Output | Delays page response for 5 seconds and returns 0. | Will not delay response with other DBMS |
+
+
+### Information schema database
+To pull data from tables using UNION SELECT, we need to properly form our SELECT queries. To do so, we need the following information:
+- List of databases
+- List of tables within each database
+- List of columns within each table
+
+The **INFORMATION_SCHEMA database** contains metadata about the databases and tables present on the server. This database plays a crucial role while exploiting SQL injection vulnerabilities. As this is a different database, we cannot call its tables directly with a SELECT statement. If we only specify a table's name for a SELECT statement, it will look for tables within the same database.
+
+### Schemata
+
+The **table SCHEMATA in the INFORMATION_SCHEMA database** contains information about all databases on the server. It is used to obtain database names so we can then query them. The SCHEMA_NAME column contains all the database names currently present.
+
+Example of query with UNION SQL injection:
+```sql
+cn' UNION select 1,schema_name,3,4 from INFORMATION_SCHEMA.SCHEMATA-- -
+```
+
+**In an union injection to find from which database the query is retrieving the data that put inside the columns we can use the fucntion database()**.
+```sql
+cn' UNION select 1,database(),2,3-- -
+```
+
+### Tables
+
+Before we dump data from the dev database, we need to get a list of the tables to query them with a SELECT statement. To find all tables within a database, we can use the TABLES table in the INFORMATION_SCHEMA Database.
+
+The TABLES table contains information about all tables throughout the database. This table contains multiple columns, but we are interested in the TABLE_SCHEMA and TABLE_NAME columns. The TABLE_NAME column stores table names, while the TABLE_SCHEMA column points to the database each table belongs to. This can be done similarly to how we found the database names. For example, we can use the following payload to find the tables within the dev database:
+```sql
+cn' UNION select 1,TABLE_NAME,TABLE_SCHEMA,4 from INFORMATION_SCHEMA.TABLES where table_schema='dev'-- -
+```
+
+### Columns
+
+To dump the data of the credentials table, we first need to find the column names in the table, which can be found in the COLUMNS table in the INFORMATION_SCHEMA database. The COLUMNS table contains information about all columns present in all the databases. This helps us find the column names to query a table for. The COLUMN_NAME, TABLE_NAME, and TABLE_SCHEMA columns can be used to achieve this. As we did before, let us try this payload to find the column names in the credentials table:
+```sql
+cn' UNION select 1,COLUMN_NAME,TABLE_NAME,TABLE_SCHEMA from INFORMATION_SCHEMA.COLUMNS where table_name='credentials'-- -
+```
+### Retrieve the interesting data
+Now that we have all the information, we can form our UNION query to dump data of the username and password columns from the credentials table in the dev database. We can place username and password in place of columns 2 and 3:
+```sql
+cn' UNION select 1, username, password, 4 from dev.credentials-- -
+```
