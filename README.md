@@ -6,3 +6,4 @@ Categories:
 - Fuzzing using ffuf;
 - JavaScript deobfuscation;
 - XSS;
+- SQL injection;

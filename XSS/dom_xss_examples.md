@@ -280,5 +280,5 @@ function escapeHTML(html) {
 If we check the documentation of the replace() function we can see that:
 The replace() method of String values returns a new string with one, some, or all matches of a pattern replaced by a replacement. The pattern can be a string or a RegExp, and the replacement can be a string or a function called for each match. **If pattern is a string, only the first occurrence will be replaced**. The original string is left unchanged.
 
-# Exploit
+### Exploit
 We can give a payload like: ```<h1><img src=0 onerror=alert()></img>```
