@@ -42,7 +42,7 @@ Time-based blind SQL Injection is considerably slower than the boolean-based bli
 
 This type of injection embedded a query within the original query. Such SQL injection is uncommon, as it needs the vulnerable web app to be written in a certain way. Still, SQLMap supports this kind of SQLi as well.
 
-### Out-of-band SQL injection
+### Out-of-band SQL injection
 
 This is considered one of the most advanced types of SQLi, used in cases where all other types are either unsupported by the vulnerable web application or are too slow (e.g., time-based blind SQLi). SQLMap supports out-of-band SQLi through "DNS exfiltration," where requested queries are retrieved through DNS traffic.
 
