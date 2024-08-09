@@ -7,3 +7,4 @@ Categories:
 - JavaScript deobfuscation;
 - XSS;
 - SQL injection;
+- SQLMap;
