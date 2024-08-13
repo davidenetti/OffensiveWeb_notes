@@ -8,3 +8,4 @@ Categories:
 - XSS;
 - SQL injection;
 - SQLMap;
+- Command injection;
