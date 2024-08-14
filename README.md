@@ -9,3 +9,4 @@ Categories:
 - SQL injection;
 - SQLMap;
 - Command injection;
+- File upload attacks;
