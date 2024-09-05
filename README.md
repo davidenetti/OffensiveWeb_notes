@@ -10,3 +10,4 @@ Categories:
 - SQLMap;
 - Command injection;
 - File upload attacks;
+- Server side attacks (SSRF, SSI, SSTI, XSLT injection);
