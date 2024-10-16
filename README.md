@@ -11,3 +11,8 @@ Categories:
 - Command injection;
 - File upload attacks;
 - Server side attacks (SSRF, SSI, SSTI, XSLT injection);
+- Login brute force;
+- Broken authentication;
+- HTTP verb tampering;
+- IDOR;
+- XML External Entity Injection;
