@@ -270,26 +270,3 @@ Product Version: <xsl:value-of select="system-property('xsl:product-version')" /
 ```
 
 Since the web application interpreted the XSLT elements we provided, this confirms an XSLT injection vulnerability.
-
-### Local file inclusion (LFI)
-
-We can try to use multiple different functions to read a local file. Whether a payload will work depends on the XSLT version and the configuration of the XSLT library. For instance, XSLT contains a function unparsed-text that can be used to read a local file:
-
-```xml
-<xsl:value-of select="unparsed-text('/etc/passwd', 'utf-8')" />
-```
-
-However, it was only introduced in XSLT version 2.0. However, if the XSLT library is configured to support PHP functions, we can call the PHP function file_get_contents using the following XSLT element:
-
-```xml
-<xsl:value-of select="php:function('file_get_contents','/etc/passwd')" />
-```
-
-### Remote code execution (RCE)
-
-If an XSLT processor supports PHP functions, we can call a PHP function that executes a local system command to obtain RCE. For instance, we can call the PHP function system to execute a command:
-
-```xml
-<xsl:value-of select="php:function('system','id')" />
-```
-

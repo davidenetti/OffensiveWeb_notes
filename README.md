@@ -16,3 +16,4 @@ Categories:
 - HTTP verb tampering;
 - IDOR;
 - XML External Entity Injection;
+- File inclusion;
