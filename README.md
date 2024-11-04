@@ -17,3 +17,5 @@ Categories:
 - IDOR;
 - XML External Entity Injection;
 - File inclusion;
+- Session security.
+
