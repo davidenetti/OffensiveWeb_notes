@@ -4,7 +4,7 @@ This type of vulnerability occurs when a web application fetches additional reso
 
 Suppose a web server fetches remote resources based on user input. In that case, an attacker might be able to coerce the server into making requests to arbitrary URLs supplied by the attacker, i.e., the web server is vulnerable to SSRF.
 
-### Identifying SSRF
+### Identifying SSRF
 
 An example is a web page which presents the possibility to schedule an appointment using a "check availability" button. We can intercept this request with Burp and then notice that in the request there is a URL to an external resource.
 
