@@ -87,7 +87,7 @@ We can confirm the SSRF vulnerability by:
 - Point the SSRF to our IP.
 
 
-# Server Side Template Injection (SSTI)
+# Server Side Template Injection (SSTI)
 
 As the name suggests, Server-side Template Injection (SSTI) occurs when an attacker can inject templating code into a template that is later rendered by the server. If an attacker injects malicious code, the server potentially executes the code during the rendering process, enabling an attacker to take over the server completely.
 
