@@ -140,16 +140,7 @@ Nikto is a powerful open-source web server scanner. In addition to its primary f
 ```nikto -h example.com```
 
 # Crawling
-- OWASP ZAP;
-- Scrapy.
-
-
-## Crawling using scrapy and ReconSpider
-
-1. Download ReconSpider and unzip it;
-2. Install scrapy (PIP install);
-3. Use the following command: ```python3 ReconSpider.py http://example.com"```
-4. Check the result in the current path in the auto-creating file called "results.json".
+- OWASP ZAP
 
 # Google dorking
 
