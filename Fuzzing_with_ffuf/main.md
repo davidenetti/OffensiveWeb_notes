@@ -12,7 +12,9 @@ ffuf -w /opt/useful/SecLists/Discovery/Web-Content/directory-list-2.3-small.txt:
 ```
 
 Next, as we want to be fuzzing for web directories, we can place the FUZZ keyword where the directory would be within our URL, with:
-```ffuf -w <SNIP> -u http://SERVER_IP:PORT/FUZZ```
+```bash
+ffuf -w <SNIP> -u http://SERVER_IP:PORT/FUZZ
+```
 
 # Pages extension fuzzing
 
