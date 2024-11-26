@@ -158,7 +158,7 @@ It is always important to know what type of application we are working with. An 
 
 **The first and easiest step is reviewing the page source code**.
 
-### WP Version - Source Code
+### WP Version - Source Code
 
 ```html
 ...SNIP...
