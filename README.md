@@ -17,5 +17,6 @@ Categories:
 - IDOR;
 - XML External Entity Injection;
 - File inclusion;
-- Session security.
-
+- Session security;
+- Web services and API attacks;
+- WordPress hacking.
