@@ -62,7 +62,7 @@ adminpw=admin
 ```
 
 We need to **URL-encode all special characters** to construct a valid gopher URL from this. In particular, spaces (%20) and newlines (%0D%0A) must be URL-encoded. Afterward, we need to prefix the data with the gopher URL scheme, the target host and port, and an underscore, resulting in the following gopher URL:
-- gopher://dateserver.htb:80/_POST%20/admin.php%20HTTP%2F1.1%0D%0AHost:%20dateserver.htb%0D%0AContent-Length:%2013%0D%0AContent-Type:%20application/x-www-form-urlencoded%0D%0A%0D%0Aadminpw%3Dadmin
+- ```gopher://dateserver.htb:80/_POST%20/admin.php%20HTTP%2F1.1%0D%0AHost:%20dateserver.htb%0D%0AContent-Length:%2013%0D%0AContent-Type:%20application/x-www-form-urlencoded%0D%0A%0D%0Aadminpw%3Dadmin```
 
 Our specified bytes are sent to the target when the web application processes this URL. Since we carefully chose the bytes to represent a valid POST request, the internal web server accepts our POST request and responds accordingly. However, since we are sending our URL within the HTTP POST parameter dateserver, which itself is URL-encoded, we need to URL-encode the entire URL again to ensure the correct format of the URL after the web server accepts it. Otherwise, we will get a Malformed URL error. After URL encoding the entire gopher URL one more time, we can finally send the request.
 
@@ -87,7 +87,7 @@ We can confirm the SSRF vulnerability by:
 - Point the SSRF to our IP.
 
 
-# Server Side Template Injection (SSTI)
+# Server Side Template Injection (SSTI)
 
 As the name suggests, Server-side Template Injection (SSTI) occurs when an attacker can inject templating code into a template that is later rendered by the server. If an attacker injects malicious code, the server potentially executes the code during the rendering process, enabling an attacker to take over the server completely.
 
