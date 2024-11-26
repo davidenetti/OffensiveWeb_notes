@@ -322,7 +322,7 @@ If the credentials are not valid, we will **receive a 403 faultCode** error.
 <br>
 <br>
 
-# WPScan
+# WPScan
 
 There are various enumeration options that can be specified, such as vulnerable plugins, all plugins, user enumeration, and more. It is important to understand all of the options available to us and fine-tune the scanner depending on the goal (i.e., are we just interested to see if the WordPress site is using any vulnerable plugins, do we need to perform a full audit of all aspects of the site or are we just interested in creating a user list to use in a brute force password guessing attack?).
 
