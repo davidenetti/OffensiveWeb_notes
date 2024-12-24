@@ -281,7 +281,7 @@ If you need to work with ```iframes```, for example, in order to be able to trig
 ## Custom tags option to evade WAF
 
 ```html
-/?search=<custom-tag id='x' onfocus='alert(document.cookie)' tabindex=1></custom-tag>#x
+/?search=<custom-tag id='x' onfocus='alert(document.cookie)' tabindex=1>test</custom-tag>#x
 ```
 
 In order to automate the execution of the alert we can use the "onfocus event". If we assign an ID to our custom element, we can recall it by passing the hash to the URL QUERY. The problem is that an element recalled by the hashchange is not automatically "on focus". So if we set the "tabindex" parameter to 1, this element will be focused for first. If the user, then, click the tab on the keyboard will navigate other element of the page.
