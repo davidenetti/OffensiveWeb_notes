@@ -221,4 +221,3 @@ This function can be used also in this situations:
         background-image: url("javascript:alert('XSS!')");
     }
     ```
-

