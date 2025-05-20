@@ -299,3 +299,55 @@ A web application **must assign a new randomly generated session token after suc
 
 Lastly, a web application must define a proper Session Timeout for a session token. After the time interval defined in the session timeout has passed, the session will expire, and the session token is no longer accepted. If a web application does not define a session timeout, the session token would be valid infinitely, enabling an attacker to use a hijacked session effectively forever. For the security of a web application, the session timeout must be appropriately set. Because each web application has different business requirements, there is no universal session timeout value.
 
+<br>
+<br>
+<br>
+<br>
+
+# JWT security
+
+JWT (JSON Web Tokens) are a compact and self-contained way to securely transmit information between parties as a JSON object. They are often used for authentication and information exchange. 
+
+### Structure:
+A JWT has three parts:
+1. **Header**: Specifies the token type (e.g., JWT) and the signing algorithm (e.g., HS256, RS256).
+2. **Payload**: Contains claims, which are statements about an entity (e.g., user details, permissions) and additional metadata.
+3. **Signature**: Ensures the token’s integrity and authenticity.
+
+### Signature:
+The signature is created by:
+1. Encoding the header and payload in Base64Url.
+2. Combining them.
+3. Signing the result using a secret (HMAC) or private key (asymmetric encryption).
+
+The recipient verifies the signature with the shared secret or public key. This prevents tampering: if the token's content is altered, the signature will no longer match, making the token invalid.
+
+
+## Verification algorithm downgrade
+
+The **"alg:none" vulnerability** occurs when a JWT library improperly allows the verification algorithm in the token's header to be set to `"none"`, effectively disabling signature verification. 
+
+### Exploit:
+An attacker can modify the JWT header to set **"alg": "none"** and remove the signature. If the server blindly trusts the token without verifying its signature, the attacker can forge a valid-looking token with arbitrary claims.
+
+### Impact:
+This allows attackers to bypass authentication, escalate privileges, or impersonate users, leading to serious security breaches.
+
+### Mitigation:
+- Reject tokens with **"alg": "none"** unless explicitly required.
+- Use libraries that enforce strict algorithm validation.
+- Validate the algorithm server-side, not relying solely on the token's header.
+
+**N.B.**: in some cases you need to manually add a third dot at the end of the new generated token:
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJhdXRoIjoxNzM2NzYzMDg2NzE2LCJhZ2VudCI6Ik1vemlsbGEvNS4wIChNYWNpbnRvc2g7IEludGVsIE1hYyBPUyBYIDEwLjE1OyBydjoxMzMuMCkgR2Vja28vMjAxMDAxMDEgRmlyZWZveC8xMzMuMCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTczNjc2MzA4N30.
+```
+
+## Other attacks:
+1. **Weak Signing Key**: Using short or predictable keys makes brute-force attacks easier;
+2. **Algorithm Confusion**: Allowing multiple algorithms (e.g., RS256 and HS256) can lead to misuse if an attacker tricks the server into using a weaker algorithm;
+3. **Lack of Expiration**: Tokens without **exp** claims can be reused indefinitely;
+4. **Key Exposure**: Compromised secrets or private keys allow attackers to forge tokens;
+5. **Insecure Storage**: Storing JWTs in local storage or cookies without proper security controls (e.g., HttpOnly, Secure) exposes them to theft;
+6. **Replay Attacks**: JWTs can be reused by attackers unless proper mechanisms (e.g., token revocation) are in place;
+7. **Oversized Tokens**: Large payloads can cause denial-of-service (DoS) issues if not restricted.

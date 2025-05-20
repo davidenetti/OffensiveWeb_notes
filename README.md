@@ -19,5 +19,5 @@ Categories:
 - File inclusion;
 - Session security;
 - Web services and API attacks;
-- WordPress hacking.
-
+- WordPress hacking;
+- Insecure deserialization.

