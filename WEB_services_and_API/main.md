@@ -249,7 +249,7 @@ If the web service determines the operation to be executed based solely on the S
 <br>
 <br>
 
-# Attacking WordPress 'xmlrpc.php'
+## Attacking WordPress 'xmlrpc.php'
 
 It is important to note that xmlrpc.php being enabled on a WordPress instance is not a vulnerability. Depending on the methods allowed, xmlrpc.php can facilitate some enumeration and exploitation activities, though.
 
