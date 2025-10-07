@@ -41,8 +41,8 @@ gobuster fuzz -u http://94.237.120.99:44514 -H "Host: FUZZ.fuzzing_fun.htb" -w /
 
 # Filtering results in ffuf
 ```
-**--exclude-statuscodes value, -b value**: Excluded status codes. Can also handle ranges like 200,300-400,404
-**--exclude-length value, --xl value**: Exclude the following content lengths (completely ignores the status). You can separate multiple lengths by comma and it also supports ranges like 203-206
+- --exclude-statuscodes value, -b value: Excluded status codes. Can also handle ranges like 200,300-400,404
+- --exclude-length value, --xl value: Exclude the following content lengths (completely ignores the status). You can separate multiple lengths by comma and it also supports ranges like 203-206
 ```
 
 # Parameter fuzzing
