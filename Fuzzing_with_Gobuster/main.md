@@ -15,7 +15,7 @@ To find out what types of pages the website uses, like .html, .php or something 
 # Recursive fuzzing
 So far, we have been fuzzing for directories, then going under these directories, and then fuzzing for files. However, if we had dozens of directories, each with their own subdirectories and files, this would take a very long time to complete. To be able to automate this, we will utilize what is known as recursive fuzzing. In Gobuster you can enable recursion with the `-r` option.
 ```
-gobuster dir -u http://google.com/ -w Tools/Wordlists/common.txt -x html,php,tar.gz,txt -r
+gobuster dir -u http://google.com/ -w /Wordlists/common.txt -x html,php,tar.gz,txt -r
 ```
 
 # DNS subdomain fuzzing
