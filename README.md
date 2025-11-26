@@ -2,8 +2,9 @@
 My notes about web pentesting
 
 Categories:
-- Information gathering, with specific additions for web applications
-- Fuzzing using ffuf
+- Information gathering
+- IIS tilde enumeration
+- Fuzzing using GoBuster
 - JavaScript deobfuscation
 - XSS
 - SQL injection
@@ -18,6 +19,8 @@ Categories:
 - XML External Entity Injection
 - File inclusion
 - Session security
-- Web services and API attacks
+- Web services and API attacks (REST, SOAP, GraphQL)
 - WordPress hacking
+- LDAP security
 - Insecure deserialization
+- Mass assignment vulnerabilities
