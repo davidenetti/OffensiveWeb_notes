@@ -149,6 +149,10 @@ We can **obtain all the queries supported by the backend** using:
   }
 }
 ```
+In order to be able to list the input args to give to a query function we can use the following:
+```graphql
+{ __type(name: \"query\") { fields { name args { name type { name kind } } } } }
+```
 
 We can visualize in a better manner the results by using the tool called **graphql-voyager**.
 
